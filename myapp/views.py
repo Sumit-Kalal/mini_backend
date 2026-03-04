@@ -8,6 +8,7 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt    
 def register_api(request):
     if request.method == "POST":
         try:
