@@ -9,6 +9,6 @@ urlpatterns = [
     path('users/', views.user_list, name='user_list'),
     path('entries/edit/<int:id>/', views.edit_entry, name='edit_entry'),
     path('entries/delete/<int:id>/', views.delete_entry, name='delete_entry'),
-    path("test/", test_api, name="test_api"),
+    path("test/", test_api),
     path("", register, name="Registration_form"),
 ]
