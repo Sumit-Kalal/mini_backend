@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Entry
 from .forms import EntryForm, RegisterForm
 from django.contrib import messages
+from django.http import JsonResponse
 
 def register(request):
     if request.method == 'POST':
@@ -79,3 +80,6 @@ def delete_entry(request, id):
 def user_list(request):
     users = User.objects.all()
     return render(request, 'myapp/user_list.html', {'users': users})
+
+def test_api(request):
+    return JsonResponse({'message': "Backend connected successfully!"})
