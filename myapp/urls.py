@@ -10,5 +10,5 @@ urlpatterns = [
     path('entries/edit/<int:id>/', views.edit_entry, name='edit_entry'),
     path('entries/delete/<int:id>/', views.delete_entry, name='delete_entry'),
     path("", register, name="Registration_form"),
-    path("api/test/", views.test_api),
+    path("test/", views.test_api),
 ]
