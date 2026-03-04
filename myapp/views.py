@@ -6,6 +6,7 @@ from .models import Entry
 from .forms import EntryForm
 from django.http import JsonResponse
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 def register_api(request):
     if request.method == "POST":
@@ -90,5 +91,6 @@ def user_list(request):
     users = User.objects.all()
     return render(request, 'myapp/user_list.html', {'users': users})
 
+@csrf_exempt
 def test_api(request):
     return JsonResponse({'message': "Backend connected successfully!"})
