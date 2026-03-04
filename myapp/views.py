@@ -3,28 +3,37 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import Entry
-from .forms import EntryForm, RegisterForm
-from django.contrib import messages
+from .forms import EntryForm
 from django.http import JsonResponse
+import json
 
-def register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+def register_api(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
 
-            user = User.objects.create_user(
+            username = data.get("username")
+            email = data.get("email")
+            password = data.get("password")
+
+            if not username or not email or not password:
+                return JsonResponse({"error": "Missing fields"}, status=400)
+
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({"error": "Username already exists"}, status=400)
+
+            User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
-            messages.success(request, 'Registration successful! Please log in.')
-            return redirect('login_form')
-    else:
-        form = RegisterForm()
-    return render(request, 'myapp/Registration_form.html', {'form': form})
+
+            return JsonResponse({"status": "success"})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 from django.contrib.auth import authenticate, login
