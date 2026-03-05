@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
 from .models import Entry
 from .forms import EntryForm
 from django.http import JsonResponse
@@ -13,58 +12,65 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate,login 
+from django.contrib.auth import authenticate
 
-@csrf_exempt    
 @api_view(['POST'])
 def register_api(request):
-    try:
-        data = json.loads(request.body)
 
-        username = data.get('username')
-        email = data.get('email')
-        password = data.get('password')
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
 
-        if not username or not email or not password:
-            return Response({'error': 'All fields are required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not username or not email or not password:
+        return Response(
+            {'error': 'All fields are required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-        if User.objects.filter(username=username).exists():
-            return Response({'error': 'Username already taken'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        user = User.objects.create_user(username=username, email=email, password=password)
-        return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
-    
-    except json.JSONDecodeError:
-        return Response({'error': 'Invalid JSON'}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if User.objects.filter(username=username).exists():
+        return Response(
+            {'error': 'Username already taken'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password
+    )
+
+    return Response(
+        {'message': 'User registered successfully'},
+        status=status.HTTP_201_CREATED
+    )
 
 
 @api_view(['POST'])
 def login_view(request):
-    try:
-        data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
 
-        if not username or not password:
-            return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+    username = request.data.get('username')
+    password = request.data.get('password')
 
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'username': user.username
-            })
-        else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    if not username or not password:
+        return Response(
+            {'error': 'Username and password are required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-    except json.JSONDecodeError:
-        return Response({'error': 'Invalid JSON'}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    user = authenticate(username=username, password=password)
+
+    if user is not None:
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'username': user.username
+        }, status=status.HTTP_200_OK)
+
+    return Response(
+        {'error': 'Invalid credentials'},
+        status=status.HTTP_401_UNAUTHORIZED
+    )
 
 
 def home_view(request):
@@ -92,7 +98,7 @@ def delete_entry(request, id):
 
     return redirect('user_list')
 
-@login_required
+
 def user_list(request):
     users = User.objects.all()
     return render(request, 'myapp/user_list.html', {'users': users})
