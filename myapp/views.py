@@ -7,6 +7,10 @@ from .forms import EntryForm
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
+
 
 @csrf_exempt    
 def register_api(request):
@@ -61,10 +65,6 @@ def login_view(request):
 def home_view(request):
     return render(request, "myapp/dashboard.html")
 
-from django.shortcuts import get_object_or_404, redirect
-
-from .forms import EntryForm
-from django.shortcuts import get_object_or_404, redirect, render
 
 def edit_entry(request, id):
     entry = get_object_or_404(Entry, id=id, user=request.user)
@@ -95,3 +95,6 @@ def user_list(request):
 @csrf_exempt
 def test_api(request):
     return JsonResponse({'message': "Backend connected successfully!"})
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

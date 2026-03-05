@@ -1,7 +1,18 @@
-from django.urls import path
+from django.urls import path,include
 from .views import home_view, register_api
 from . import views
 from myapp.views import test_api
+from rest_framework.routers import DefaultRouter
+from .views import UserViewSet
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
+urlpatterns = router.urls
+
 urlpatterns = [
     path("api/register/", register_api, name="register_api"),
     path("login/", views.login_view, name="login_form"),
@@ -11,4 +22,7 @@ urlpatterns = [
     path('entries/delete/<int:id>/', views.delete_entry, name='delete_entry'),
     path("test/", test_api),
     path("", register_api, name="register_api"),
+    path('api/', include('myapp.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
