@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import Entry
 from .forms import EntryForm
@@ -8,9 +7,10 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-from django.contrib.auth.models import User
 from .serializers import UserSerializer
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
+from django.contrib.auth import authenticate,login 
 
 @csrf_exempt    
 def register_api(request):
@@ -42,7 +42,6 @@ def register_api(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
-from django.contrib.auth import authenticate, login
 
 def login_view(request):
     if request.method == "POST":
@@ -98,3 +97,4 @@ def test_api(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]

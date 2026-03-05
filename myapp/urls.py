@@ -1,9 +1,8 @@
-from django.urls import path,include
-from .views import home_view, register_api
+from django.urls import path
+from .views import home_view, register_api, UserViewSet
 from . import views
 from myapp.views import test_api
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
