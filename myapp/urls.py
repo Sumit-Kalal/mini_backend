@@ -17,8 +17,6 @@ urlpatterns = [
     path("api/login/", views.login_view, name="login_api"),
     path("dashboard/", home_view, name="dashboard"),
     path('api/users/', views.user_list, name='user_list'),
-    path('api/entries/edit/<int:id>/', views.edit_entry, name='edit_entry'),
-    path('api/entries/delete/<int:id>/', views.delete_entry, name='delete_entry'),
     path("test/", test_api),
     path("", register_api, name="register_api"),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -82,30 +82,6 @@ def login_view(request):
 def home_view(request):
     return render(request, "myapp/dashboard.html")
 
-@login_required
-@api_view(['PUT'])
-def edit_entry(request, id):
-    entry = get_object_or_404(Entry, id=id, user=request.user)  
-
-    if request.method == "POST":
-        form = EntryForm(request.POST, instance=entry)
-        if form.is_valid():
-            form.save()
-            return redirect('user_list')
-    else:
-        form = EntryForm(instance=entry)
-
-    return render(request, 'myapp/edit_entry.html', {'form': form})
-
-@login_required
-@api_view(['DELETE'])
-def delete_entry(request, id):
-    entry = get_object_or_404(Entry, id=id, user=request.user)
-    if request.method == "POST":
-        entry.delete()
-
-    return redirect('user_list')
-
 
 def user_list(request):
     users = User.objects.all()
