@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from .models import Entry
 from .forms import EntryForm
 from django.http import JsonResponse
-import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from .serializers import UserSerializer
@@ -38,6 +37,12 @@ def register_api(request):
         email=email,
         password=password
     )
+    entry = Entry(
+            username=username,
+            password=password
+        )
+
+    entry.save()
 
     return Response(
         {'message': 'User registered successfully'},
