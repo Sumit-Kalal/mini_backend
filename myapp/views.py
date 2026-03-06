@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .models import Entry
 from .forms import EntryForm
@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
 
 @api_view(['POST'])
 def register_api(request):
@@ -81,9 +82,10 @@ def login_view(request):
 def home_view(request):
     return render(request, "myapp/dashboard.html")
 
-
+@login_required
+@api_view(['PUT'])
 def edit_entry(request, id):
-    entry = get_object_or_404(Entry, id=id, user=request.user)
+    entry = get_object_or_404(Entry, id=id, user=request.user)  
 
     if request.method == "POST":
         form = EntryForm(request.POST, instance=entry)
@@ -95,9 +97,10 @@ def edit_entry(request, id):
 
     return render(request, 'myapp/edit_entry.html', {'form': form})
 
+@login_required
+@api_view(['DELETE'])
 def delete_entry(request, id):
     entry = get_object_or_404(Entry, id=id, user=request.user)
-
     if request.method == "POST":
         entry.delete()
 
