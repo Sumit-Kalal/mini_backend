@@ -14,7 +14,7 @@ urlpatterns = router.urls
 
 urlpatterns = [
     path("api/register/", register_api, name="register_api"),
-    path("login/", views.login_view, name="login_form"),
+    path("api/login/", views.login_view, name="login_api"),
     path("dashboard/", home_view, name="dashboard"),
     path('users/', views.user_list, name='user_list'),
     path('entries/edit/<int:id>/', views.edit_entry, name='edit_entry'),
